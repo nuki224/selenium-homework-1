@@ -1,12 +1,11 @@
 import io.github.bonigarcia.wdm.WebDriverManager;
-import org.openqa.selenium.By;
-import org.openqa.selenium.NoSuchFrameException;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
+import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 public class Exceptions {
-    public static void main (String[] args){
+    public static void main(String[] args) {
         WebDriver driver = new ChromeDriver();
         WebDriverManager.chromedriver().setup();
         driver.get("https://jqueryui.com/datepicker/");
@@ -19,5 +18,34 @@ public class Exceptions {
             System.out.println("No such frame");
             driver.switchTo().frame(datebutton);
         }
+        WebElement date = driver.findElement(By.id("datepicker"));
+        date.click();
+        driver.findElement((By.xpath("//*[@id=\"ui-datepicker-div\"]/div/a[1]"))).click();
+        driver.findElement(By.xpath("//*[@id=\"ui-datepicker-div\"]/table/tbody/tr[last()]//td[@data-event='click'][last()]")).click();
+
+
+        driver.get(" https://demoqa.com/alerts ");
+        driver.manage().window().maximize();
+        driver.findElement(By.id("timerAlertButton")).click();
+        WebDriverWait wait = new WebDriverWait(driver, 4);
+        try {
+            wait.until(ExpectedConditions.alertIsPresent());
+        } catch (TimeoutException e) {
+            System.out.println("Time out");
+        }
+        try {
+            driver.switchTo().alert().accept();
+        } catch (NoAlertPresentException e) {
+            System.out.println("No Alert Presented");
+            wait.until(ExpectedConditions.alertIsPresent());
+            driver.switchTo().alert().accept();
+        } try {
+            datebutton.click();
+        } catch (StaleElementReferenceException e) {
+            System.out.println("Stale element reference");
+        }
+        driver.quit();
+        }
     }
-}
+
+
